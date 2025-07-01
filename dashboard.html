@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Exam Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #45a049;
+            --secondary-color: #6c757d;
+            --white: #ffffff;
+            --text-color: #333;
+            --background-color: #ccece0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), 
+                        url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .welcome-section {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .welcome-section h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .exams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .exam-card {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease;
+        }
+
+        .exam-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .exam-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .exam-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .exam-info p {
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .start-exam-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            text-align: center;
+            width: 100%;
+        }
+
+        .start-exam-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .exams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Exam Portal</span>
+        </div>
+        <div class="user-info">
+            Welcome, <span id="student-name">Student</span>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="welcome-section">
+            <h1>Student Dashboard</h1>
+            <p>Welcome to your exam portal. Please select an exam to begin.</p>
+        </div>
+
+        <div class="exams-grid">
+            <div class="exam-card">
+                <h3>Computer Science Midterm</h3>
+                <div class="exam-info">
+                    <p><i class="fas fa-clock"></i> Duration: 30 minutes</p>
+                    <p><i class="fas fa-question-circle"></i> Questions: 20</p>
+                    <p><i class="fas fa-star"></i> Total Marks: 100</p>
+                </div>
+                <a href="Computer Science Midterm.html" class="start-exam-btn" onclick="startExam('CS_MIDTERM')">Start Exam</a>
+            </div>
+
+            <div class="exam-card">
+                <h3>Mathematics Final Exam</h3>
+                <div class="exam-info">
+                    <p><i class="fas fa-clock"></i> Duration: 45 minutes</p>
+                    <p><i class="fas fa-question-circle"></i> Questions: 25</p>
+                    <p><i class="fas fa-star"></i> Total Marks: 100</p>
+                </div>
+                <a href="Mathematics Final Exam.html" class="start-exam-btn" onclick="startExam('MATH_FINAL')">Start Exam</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get current user info from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                document.getElementById('student-name').textContent = currentUser.name;
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Function to start exam
+        function startExam(examId) {
+            localStorage.setItem('currentExam', examId);
+        }
+    </script>
+</body>
+</html> 

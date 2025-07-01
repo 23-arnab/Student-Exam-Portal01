@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Science Midterm - Student Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #45a049;
+            --secondary-color: #6c757d;
+            --white: #ffffff;
+            --text-color: #333;
+            --background-color: #ccece0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), 
+                        url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .exam-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .exam-header {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .exam-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .exam-header p {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .question {
+            margin-bottom: 1.5rem;
+        }
+
+        .question h3 {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .option.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 2rem;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .warning-message {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .timer {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Exam Portal</span>
+        </div>
+        <div class="timer" id="timer">Time Remaining: 30:00</div>
+    </nav>
+
+    <div class="exam-container">
+        <div class="exam-header">
+            <h1 id="exam-title">Computer Science Midterm</h1>
+            <p>Total Questions: <span id="total-questions">20</span></p>
+            <p>Total Marks: <span id="total-marks">100</span></p>
+        </div>
+
+        <div id="questions-container">
+            <!-- Questions will be added dynamically -->
+        </div>
+
+        <button class="submit-btn" id="submit-exam">Submit Exam</button>
+        <div class="warning-message" id="warning-message">
+            Please answer all questions before submitting.
+        </div>
+    </div>
+
+    <script>
+        // Computer Science Exam Questions (HTML and CSS)
+        const examQuestions = [
+            {
+                id: 1,
+                question: "What does HTML stand for?",
+                options: ["Hyper Text Markup Language", "High Tech Modern Language", "Hyper Transfer Markup Language", "Home Tool Markup Language"],
+                correctAnswer: 0
+            },
+            {
+                id: 2,
+                question: "Which HTML tag is used to create a hyperlink?",
+                options: ["link", "a", "href", "url"],
+                correctAnswer: 1
+            },
+            {
+                id: 3,
+                question: "What is the correct HTML element for the largest heading?",
+                options: ["h6", "heading", "h1", "head"],
+                correctAnswer: 2
+            },
+            {
+                id: 4,
+                question: "Which CSS property is used to change the text color?",
+                options: ["text-color", "font-color", "color", "text-style"],
+                correctAnswer: 2
+            },
+            {
+                id: 5,
+                question: "What does CSS stand for?",
+                options: ["Computer Style Sheets", "Creative Style Sheets", "Cascading Style Sheets", "Colorful Style Sheets"],
+                correctAnswer: 2
+            },
+            {
+                id: 6,
+                question: "Which HTML attribute is used to define inline styles?",
+                options: ["class", "font", "styles", "style"],
+                correctAnswer: 3
+            },
+            {
+                id: 7,
+                question: "Which CSS property is used to change the font of an element?",
+                options: ["font-family", "font-style", "font-weight", "font-type"],
+                correctAnswer: 0
+            },
+            {
+                id: 8,
+                question: "Which HTML element is used to define a table row?",
+                options: ["td", "tr", "th", "table"],
+                correctAnswer: 1
+            },
+            {
+                id: 9,
+                question: "Which CSS property is used to add space between the content and the border of an element?",
+                options: ["margin", "padding", "border-spacing", "spacing"],
+                correctAnswer: 1
+            },
+            {
+                id: 10,
+                question: "Which HTML element is used to define a list item?",
+                options: ["list", "dl", "li", "ul"],
+                correctAnswer: 2
+            },
+            {
+                id: 11,
+                question: "Which CSS property is used to make text bold?",
+                options: ["font-weight", "text-weight", "font-style", "text-style"],
+                correctAnswer: 0
+            },
+            {
+                id: 12,
+                question: "Which HTML element is used to define a paragraph?",
+                options: ["p", "para", "paragraph", "text"],
+                correctAnswer: 0
+            },
+            {
+                id: 13,
+                question: "Which CSS property is used to change the background color?",
+                options: ["bgcolor", "background-color", "color", "background"],
+                correctAnswer: 1
+            },
+            {
+                id: 14,
+                question: "Which HTML element is used to define a form?",
+                options: ["input", "form", "submit", "button"],
+                correctAnswer: 1
+            },
+            {
+                id: 15,
+                question: "Which CSS property is used to control the text size?",
+                options: ["text-size", "font-size", "text-style", "font-style"],
+                correctAnswer: 1
+            },
+            {
+                id: 16,
+                question: "Which HTML element is used to define a table header?",
+                options: ["thead", "th", "header", "tr"],
+                correctAnswer: 1
+            },
+            {
+                id: 17,
+                question: "Which CSS property is used to create space between elements?",
+                options: ["padding", "margin", "spacing", "border"],
+                correctAnswer: 1
+            },
+            {
+                id: 18,
+                question: "Which HTML element is used to define a division or section?",
+                options: ["section", "div", "span", "block"],
+                correctAnswer: 1
+            },
+            {
+                id: 19,
+                question: "Which CSS property is used to change the text alignment?",
+                options: ["text-align", "align", "text-style", "font-align"],
+                correctAnswer: 0
+            },
+            {
+                id: 20,
+                question: "Which HTML element is used to define a line break?",
+                options: ["break", "lb", "br", "newline"],
+                correctAnswer: 2
+            }
+        ];
+
+        // Initialize exam
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const currentExam = localStorage.getItem('currentExam');
+            
+            if (!currentUser || !currentExam) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Display questions
+            const questionsContainer = document.getElementById('questions-container');
+            examQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.innerHTML = `
+                    <div class="question">
+                        <h3>Question ${index + 1}: ${q.question}</h3>
+                        <div class="options">
+                            ${q.options.map((option, i) => `
+                                <div class="option" data-question="${q.id}" data-option="${i}">
+                                    <input type="radio" name="q${q.id}" id="q${q.id}o${i}" value="${i}">
+                                    <label for="q${q.id}o${i}">${option}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+
+            // Add click handlers for options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const questionId = this.dataset.question;
+                    const optionIndex = this.dataset.option;
+                    
+                    // Remove selected class from all options in this question
+                    document.querySelectorAll(`.option[data-question="${questionId}"]`).forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Check the radio button
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                });
+            });
+
+            // Timer functionality - 30 minutes
+            let timeLeft = 30 * 60; // 30 minutes in seconds
+            const timerElement = document.getElementById('timer');
+
+            function updateTimer() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `Time Remaining: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    submitExam();
+                } else {
+                    timeLeft--;
+                }
+            }
+
+            setInterval(updateTimer, 1000);
+
+            // Submit exam functionality
+            document.getElementById('submit-exam').addEventListener('click', function() {
+                const warningMessage = document.getElementById('warning-message');
+                const selectedAnswers = {};
+                let allQuestionsAnswered = true;
+
+                examQuestions.forEach(q => {
+                    const selectedOption = document.querySelector(`input[name="q${q.id}"]:checked`);
+                    if (!selectedOption) {
+                        allQuestionsAnswered = false;
+                    } else {
+                        selectedAnswers[q.id] = parseInt(selectedOption.value);
+                    }
+                });
+
+                if (!allQuestionsAnswered) {
+                    warningMessage.style.display = 'block';
+                    return;
+                }
+
+                submitExam(selectedAnswers);
+            });
+
+            function submitExam(answers) {
+                // Calculate score
+                let score = 0;
+                examQuestions.forEach(q => {
+                    if (answers && answers[q.id] === q.correctAnswer) {
+                        score += 5; // 5 marks per question (100 total)
+                    }
+                });
+
+                // Store exam results
+                const examResults = {
+                    examId: currentExam,
+                    studentId: currentUser.collegeId,
+                    score: score,
+                    totalMarks: 100,
+                    date: new Date().toISOString()
+                };
+
+                // Store results in localStorage
+                const results = JSON.parse(localStorage.getItem('examResults') || '[]');
+                results.push(examResults);
+                localStorage.setItem('examResults', JSON.stringify(results));
+
+                // Redirect to results page
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html> 

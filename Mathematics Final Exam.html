@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematics Final Exam - Student Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #45a049;
+            --secondary-color: #6c757d;
+            --white: #ffffff;
+            --text-color: #333;
+            --background-color: #ccece0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), 
+                        url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .exam-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .exam-header {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .exam-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .exam-header p {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .question {
+            margin-bottom: 1.5rem;
+        }
+
+        .question h3 {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .option.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 2rem;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .warning-message {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .timer {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Exam Portal</span>
+        </div>
+        <div class="timer" id="timer">Time Remaining: 45:00</div>
+    </nav>
+
+    <div class="exam-container">
+        <div class="exam-header">
+            <h1 id="exam-title">Mathematics Final Exam</h1>
+            <p>Total Questions: <span id="total-questions">25</span></p>
+            <p>Total Marks: <span id="total-marks">100</span></p>
+        </div>
+
+        <div id="questions-container">
+            <!-- Questions will be added dynamically -->
+        </div>
+
+        <button class="submit-btn" id="submit-exam">Submit Exam</button>
+        <div class="warning-message" id="warning-message">
+            Please answer all questions before submitting.
+        </div>
+    </div>
+
+    <script>
+        // Mathematics Final Exam Questions
+        const examQuestions = [
+            {
+                id: 1,
+                question: "What is the value of π (pi) to two decimal places?",
+                options: ["3.14", "3.16", "3.12", "3.18"],
+                correctAnswer: 0
+            },
+            {
+                id: 2,
+                question: "Solve for x: 2x + 5 = 13",
+                options: ["x = 4", "x = 6", "x = 8", "x = 3"],
+                correctAnswer: 0
+            },
+            {
+                id: 3,
+                question: "What is the square root of 144?",
+                options: ["10", "12", "14", "16"],
+                correctAnswer: 1
+            },
+            {
+                id: 4,
+                question: "What is the area of a circle with radius 5 units?",
+                options: ["25π", "10π", "15π", "20π"],
+                correctAnswer: 0
+            },
+            {
+                id: 5,
+                question: "Simplify: (x² + 2x) + (3x² - x)",
+                options: ["4x² + x", "4x² + 3x", "4x² - x", "4x² + 2x"],
+                correctAnswer: 0
+            },
+            {
+                id: 6,
+                question: "What is the slope of a line parallel to y = 3x + 2?",
+                options: ["3", "-3", "2", "1/3"],
+                correctAnswer: 0
+            },
+            {
+                id: 7,
+                question: "Factor: x² - 9",
+                options: ["(x+3)(x-3)", "(x+9)(x-9)", "(x+3)(x+3)", "(x-3)(x-3)"],
+                correctAnswer: 0
+            },
+            {
+                id: 8,
+                question: "What is the value of sin(90°)?",
+                options: ["0", "1", "-1", "undefined"],
+                correctAnswer: 1
+            },
+            {
+                id: 9,
+                question: "Solve: log₁₀(100)",
+                options: ["1", "2", "10", "100"],
+                correctAnswer: 1
+            },
+            {
+                id: 10,
+                question: "What is the derivative of x²?",
+                options: ["x", "2x", "2", "x²"],
+                correctAnswer: 1
+            },
+            {
+                id: 11,
+                question: "What is the integral of 2x?",
+                options: ["x²", "x² + C", "2x² + C", "x"],
+                correctAnswer: 2
+            },
+            {
+                id: 12,
+                question: "What is the value of cos(0°)?",
+                options: ["0", "1", "-1", "undefined"],
+                correctAnswer: 1
+            },
+            {
+                id: 13,
+                question: "Solve: 5! (factorial)",
+                options: ["120", "24", "720", "20"],
+                correctAnswer: 0
+            },
+            {
+                id: 14,
+                question: "What is the probability of rolling a 6 on a fair die?",
+                options: ["1/6", "1/3", "1/2", "1/4"],
+                correctAnswer: 0
+            },
+            {
+                id: 15,
+                question: "What is the sum of the interior angles of a pentagon?",
+                options: ["360°", "540°", "720°", "900°"],
+                correctAnswer: 1
+            },
+            {
+                id: 16,
+                question: "What is the value of e (Euler's number) to 2 decimal places?",
+                options: ["2.71", "2.72", "2.73", "2.74"],
+                correctAnswer: 1
+            },
+            {
+                id: 17,
+                question: "Solve: |x - 3| = 5",
+                options: ["x = 8 or x = -2", "x = 8 or x = 2", "x = -8 or x = 2", "x = -8 or x = -2"],
+                correctAnswer: 0
+            },
+            {
+                id: 18,
+                question: "What is the domain of f(x) = √x?",
+                options: ["All real numbers", "x ≥ 0", "x > 0", "x ≤ 0"],
+                correctAnswer: 1
+            },
+            {
+                id: 19,
+                question: "What is the range of f(x) = x²?",
+                options: ["All real numbers", "x ≥ 0", "y ≥ 0", "y ≤ 0"],
+                correctAnswer: 2
+            },
+            {
+                id: 20,
+                question: "What is the value of tan(45°)?",
+                options: ["0", "1", "√2", "undefined"],
+                correctAnswer: 1
+            },
+            {
+                id: 21,
+                question: "Solve: 2³ × 2⁴",
+                options: ["2⁷", "2¹²", "2⁶", "2⁵"],
+                correctAnswer: 0
+            },
+            {
+                id: 22,
+                question: "What is the volume of a cube with side length 3 units?",
+                options: ["9", "18", "27", "6"],
+                correctAnswer: 2
+            },
+            {
+                id: 23,
+                question: "What is the sum of the first 10 natural numbers?",
+                options: ["45", "55", "50", "40"],
+                correctAnswer: 1
+            },
+            {
+                id: 24,
+                question: "What is the value of log₂(8)?",
+                options: ["2", "3", "4", "8"],
+                correctAnswer: 1
+            },
+            {
+                id: 25,
+                question: "What is the perimeter of a rectangle with length 5 units and width 3 units?",
+                options: ["16", "15", "8", "10"],
+                correctAnswer: 0
+            }
+        ];
+
+        // Initialize exam
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const currentExam = localStorage.getItem('currentExam');
+            
+            if (!currentUser || !currentExam) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Display questions
+            const questionsContainer = document.getElementById('questions-container');
+            examQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.innerHTML = `
+                    <div class="question">
+                        <h3>Question ${index + 1}: ${q.question}</h3>
+                        <div class="options">
+                            ${q.options.map((option, i) => `
+                                <div class="option" data-question="${q.id}" data-option="${i}">
+                                    <input type="radio" name="q${q.id}" id="q${q.id}o${i}" value="${i}">
+                                    <label for="q${q.id}o${i}">${option}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+
+            // Add click handlers for options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const questionId = this.dataset.question;
+                    const optionIndex = this.dataset.option;
+                    
+                    // Remove selected class from all options in this question
+                    document.querySelectorAll(`.option[data-question="${questionId}"]`).forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Check the radio button
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                });
+            });
+
+            // Timer functionality - 45 minutes
+            let timeLeft = 45 * 60; // 45 minutes in seconds
+            const timerElement = document.getElementById('timer');
+
+            function updateTimer() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `Time Remaining: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    submitExam();
+                } else {
+                    timeLeft--;
+                }
+            }
+
+            setInterval(updateTimer, 1000);
+
+            // Submit exam functionality
+            document.getElementById('submit-exam').addEventListener('click', function() {
+                const warningMessage = document.getElementById('warning-message');
+                const selectedAnswers = {};
+                let allQuestionsAnswered = true;
+
+                examQuestions.forEach(q => {
+                    const selectedOption = document.querySelector(`input[name="q${q.id}"]:checked`);
+                    if (!selectedOption) {
+                        allQuestionsAnswered = false;
+                    } else {
+                        selectedAnswers[q.id] = parseInt(selectedOption.value);
+                    }
+                });
+
+                if (!allQuestionsAnswered) {
+                    warningMessage.style.display = 'block';
+                    return;
+                }
+
+                submitExam(selectedAnswers);
+            });
+
+            function submitExam(answers) {
+                // Calculate score
+                let score = 0;
+                examQuestions.forEach(q => {
+                    if (answers && answers[q.id] === q.correctAnswer) {
+                        score += 4; // 4 marks per question (100 total)
+                    }
+                });
+
+                // Store exam results
+                const examResults = {
+                    examId: currentExam,
+                    studentId: currentUser.collegeId,
+                    score: score,
+                    totalMarks: 100,
+                    date: new Date().toISOString()
+                };
+
+                // Store results in localStorage
+                const results = JSON.parse(localStorage.getItem('examResults') || '[]');
+                results.push(examResults);
+                localStorage.setItem('examResults', JSON.stringify(results));
+
+                // Redirect to results page
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html> 
